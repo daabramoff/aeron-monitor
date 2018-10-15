@@ -1,5 +1,3 @@
-# aeron-monitoring
-
 # Build
 
 [Gradle](http://gradle.org/) is used as build system. Latest stable JDK 8 is also required to build
