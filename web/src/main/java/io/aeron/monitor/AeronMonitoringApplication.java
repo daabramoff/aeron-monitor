@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AeronMonitoringApplication {
 
     public static void main(final String[] args) {
-//        System.err.close();
-//        System.setErr(System.out);
         SpringApplication.run(AeronMonitoringApplication.class, args);
     }
 }
