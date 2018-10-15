@@ -109,7 +109,7 @@ public class RestApiControllerV1 {
             LOG.debug("Connected to driver: {}", d);
             return Optional.of(d);
         } else {
-            LOG.warn("Failed to connect to driver: {}", d);
+            LOG.debug("Failed to connect to driver: {}", d);
             return Optional.empty();
         }
     }
