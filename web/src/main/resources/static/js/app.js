@@ -23,25 +23,27 @@ var app = new Vue({
     },
     
     pollDriver() {
+      const DISCONNECTED_TIMEOUT = 1000;
+      const ACTIVE_TIMEOUT = 5000;
       var self = this;
       var poll =  function(){
         const Http = new XMLHttpRequest();
         Http.open('GET', '/api/v1//drivers/' + self.$data.selectedDriver.name );
         Http.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200 ) {
-            var t = 1000;
+            var t = ACTIVE_TIMEOUT;
             const resp = JSON.parse(Http.responseText); 
-            if (!resp) {
+            if (Object.keys(resp).length === 0) {
               self.$data.connectionState.color = 'red';
               self.$data.connectionState.label = 'Disconnected';
             } else {
               if (!resp.active) {
                 self.$data.connectionState.color = 'orange';
-                self.$data.connectionState.label = 'Connected';
+                self.$data.connectionState.label = 'Stale';
               } else {
                 self.$data.connectionState.color = 'green';
                 self.$data.connectionState.label = 'Active';
-                t = 10000;
+                t = DISCONNECTED_TIMEOUT;
               }
             }
 
@@ -68,6 +70,9 @@ var app = new Vue({
           if (this.readyState == 4 && this.status == 200 ) {
             const resp = JSON.parse(Http.responseText); 
             const counters = resp.counters; 
+            if (!counters) {
+              return;
+            }
             var data = self.$data.counters.data;
             for (var i = 0; i != counters.length; i++) {
               const c = counters[i];
