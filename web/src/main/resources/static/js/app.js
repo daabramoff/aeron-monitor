@@ -34,15 +34,15 @@ var app = new Vue({
             var t = ACTIVE_TIMEOUT;
             const resp = JSON.parse(Http.responseText); 
             if (Object.keys(resp).length === 0) {
-              self.$data.connectionState.color = 'red';
               self.$data.connectionState.label = 'Disconnected';
+              self.$data.connectionState.style.color = 'red';
             } else {
               if (!resp.active) {
-                self.$data.connectionState.color = 'orange';
                 self.$data.connectionState.label = 'Stale';
+                self.$data.connectionState.style.color = 'orange';
               } else {
-                self.$data.connectionState.color = 'green';
                 self.$data.connectionState.label = 'Active';
+                self.$data.connectionState.style.color = 'green';
                 t = DISCONNECTED_TIMEOUT;
               }
             }
@@ -144,8 +144,13 @@ var app = new Vue({
     }, 
     
     connectionState: {
-      color: 'red',
-      label: 'Disconnected'
+      label: 'Disconnected',
+      style: {
+        color: 'red',
+        width: '140px',
+        display: 'inline-block',
+        'text-align': 'center'
+      },
     },
     
     counters: {
