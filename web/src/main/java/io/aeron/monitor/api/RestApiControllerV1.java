@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -44,6 +45,13 @@ public class RestApiControllerV1 {
         return drivers.keySet();
     }
 
+    /**
+     * Returns driver information.
+     * 
+     * @param name name of the driver
+     * @return {@link Map} which contains the driver's name, CNC version and active
+     *         status
+     */
     @RequestMapping("drivers/{name}")
     @ApiOperation("Returns driver information")
     public Map<String, Object> getDriver(
@@ -64,6 +72,13 @@ public class RestApiControllerV1 {
         return m;
     }
 
+    /**
+     * Returns system counters for the driver.
+     * 
+     * @param name name of the driver
+     * @return {@link Map} which contains name of the driver, active status and
+     *         {@link List} of the counters
+     */
     @RequestMapping("cnc/systemCounters/{name}")
     @ApiOperation("Returns system counters")
     public Map<String, Object> getCounters(

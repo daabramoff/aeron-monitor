@@ -17,6 +17,12 @@ public class ThreadPoolConfig {
     private static final int DEFAULT_RESERVED_THREADS = -1;
     private static final int DEFAULT_IDLE_TIMEOUT_MILLIS = 60_000;
 
+    /**
+     * Creates unified thread pool for the application.
+     * 
+     * @return {@link ThreadPool} the thread pool
+     * @throws Exception if the pool could not start
+     */
     @Bean
     public ThreadPool getThreadPool() throws Exception {
         final QueuedThreadPool pool = new QueuedThreadPool();

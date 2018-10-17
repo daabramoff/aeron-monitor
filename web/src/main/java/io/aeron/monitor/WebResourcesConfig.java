@@ -2,6 +2,8 @@ package io.aeron.monitor;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 
+import io.swagger.models.Swagger;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -19,6 +21,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class WebResourcesConfig extends WebMvcConfigurationSupport {
 
+    /**
+     * Configures {@link Swagger} documentation.
+     * 
+     * @return Configured documentation
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)

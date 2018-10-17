@@ -23,8 +23,14 @@ public class IndexPageController {
     @Value("${page.index.toolbar.title}")
     private String toolBarTitle;
 
+    /**
+     * Provides response for the root page.
+     * 
+     * @param model Template model
+     * @return root page template
+     */
     @RequestMapping("/")
-    public String welcome(final Map<String, Object> model) {
+    public String index(final Map<String, Object> model) {
         model.put(TEMPLATE_KEY_APP_VERSION, appVersion);
         model.put(TEMPLATE_KEY_PAGE_TITLE, pageTitle);
         model.put(TEMPLATE_KEY_TOOLBAR_TITLE, toolBarTitle);

@@ -28,6 +28,12 @@ public class ResourcesConfig {
     @Value("${aeron.drivers}")
     private String driverList;
 
+    /**
+     * Provides the singleton which accesses the observed drivers.
+     * 
+     * @return {@link Map} where key is the driver's name and value is the driver's
+     *         accessor
+     */
     @Bean("aeronDrivers")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Map<String, DriverAccess> getDrivers() {
