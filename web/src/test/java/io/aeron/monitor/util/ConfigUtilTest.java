@@ -9,8 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.aeron.monitor.DriverDefinition;
 import io.aeron.monitor.util.ConfigUtil;
-import io.aeron.monitoring.DriverDefinition;
 
 class ConfigUtilTest {
 

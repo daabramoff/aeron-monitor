@@ -1,8 +1,8 @@
 package io.aeron.monitor.api;
 
 import io.aeron.monitor.Const;
-import io.aeron.monitoring.DriverAccess;
-import io.aeron.monitoring.DriverAccessSupport;
+import io.aeron.monitor.DriverAccess;
+import io.aeron.monitor.DriverAccessSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

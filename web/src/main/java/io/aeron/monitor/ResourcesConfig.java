@@ -1,8 +1,8 @@
 package io.aeron.monitor;
 
 import io.aeron.CommonContext;
+import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.util.ConfigUtil;
-import io.aeron.monitoring.DriverAccess;
 
 import java.util.Collections;
 import java.util.Map;

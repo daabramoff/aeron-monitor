@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.aeron.monitor.ext.Plugin;
 import io.aeron.monitor.ext.PluginLoader;
 import io.aeron.monitor.ext.plugins.TestPlugin;
-import io.aeron.monitoring.ext.Plugin;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

@@ -1,6 +1,6 @@
-package io.aeron.monitoring.ext;
+package io.aeron.monitor.ext;
 
-import io.aeron.monitoring.DriverAccess;
+import io.aeron.monitor.DriverAccess;
 
 import java.util.Map;
 

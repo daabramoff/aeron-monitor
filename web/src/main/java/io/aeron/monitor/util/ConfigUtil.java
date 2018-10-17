@@ -1,6 +1,6 @@
 package io.aeron.monitor.util;
 
-import io.aeron.monitoring.DriverDefinition;
+import io.aeron.monitor.DriverDefinition;
 
 import java.util.ArrayList;
 import java.util.List;

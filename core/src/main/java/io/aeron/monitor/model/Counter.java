@@ -1,4 +1,4 @@
-package io.aeron.monitoring.model;
+package io.aeron.monitor.model;
 
 import io.aeron.driver.status.SystemCounterDescriptor;
 import io.swagger.annotations.ApiModel;

@@ -1,4 +1,4 @@
-package io.aeron.monitoring;
+package io.aeron.monitor;
 
 import static io.aeron.CncFileDescriptor.cncVersionOffset;
 
@@ -9,6 +9,7 @@ import io.aeron.CommonContext;
 import java.io.File;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.agrona.DirectBuffer;
@@ -81,31 +82,33 @@ public class DriverAccess {
         return connected ? toDriver.consumerHeartbeatTime() : 0L;
     }
 
-    public CountersReader getCountersReader() {
-        return connected ? countersReader : null;
+    public Optional<CountersReader> getCountersReader() {
+        return connected ? Optional.of(countersReader) : Optional.empty();
     }
 
     public synchronized void connect() {
-        if (!connected) {
-            try {
-                final File cncFile = new File(dir, CncFileDescriptor.CNC_FILE);
+        if (connected) {
+            return;
+        }
 
-                cncByteBuffer = IoUtil.mapExistingFile(cncFile, "cnc");
-                cncMetaData = CncFileDescriptor.createMetaDataBuffer(cncByteBuffer);
+        try {
+            final File cncFile = new File(dir, CncFileDescriptor.CNC_FILE);
 
-                toDriver = new ManyToOneRingBuffer(
-                        CncFileDescriptor.createToDriverBuffer(cncByteBuffer, cncMetaData));
+            cncByteBuffer = IoUtil.mapExistingFile(cncFile, "cnc");
+            cncMetaData = CncFileDescriptor.createMetaDataBuffer(cncByteBuffer);
 
-                countersReader = new CountersReader(
-                        CncFileDescriptor.createCountersMetaDataBuffer(cncByteBuffer, cncMetaData),
-                        CncFileDescriptor.createCountersValuesBuffer(cncByteBuffer, cncMetaData),
-                        StandardCharsets.US_ASCII);
+            toDriver = new ManyToOneRingBuffer(
+                    CncFileDescriptor.createToDriverBuffer(cncByteBuffer, cncMetaData));
 
-                connected = true;
-            } catch (final Exception ex) {
-                if (errorHandler != null) {
-                    errorHandler.accept(ex);
-                }
+            countersReader = new CountersReader(
+                    CncFileDescriptor.createCountersMetaDataBuffer(cncByteBuffer, cncMetaData),
+                    CncFileDescriptor.createCountersValuesBuffer(cncByteBuffer, cncMetaData),
+                    StandardCharsets.US_ASCII);
+
+            connected = true;
+        } catch (final Exception ex) {
+            if (errorHandler != null) {
+                errorHandler.accept(ex);
             }
         }
     }
@@ -115,6 +118,12 @@ public class DriverAccess {
         connect();
     }
 
+    public void reconnectIfInactive() {
+        if (!isActive()) {
+            reconnect();
+        }
+    }
+    
     @Override
     public String toString() {
         return "DriverAccess [name=" + name + ", dir=" + dir + "]";

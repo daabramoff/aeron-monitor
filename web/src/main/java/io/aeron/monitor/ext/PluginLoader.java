@@ -1,8 +1,8 @@
 package io.aeron.monitor.ext;
 
 import io.aeron.monitor.Const;
-import io.aeron.monitoring.DriverAccess;
-import io.aeron.monitoring.ext.Plugin;
+import io.aeron.monitor.DriverAccess;
+import io.aeron.monitor.ext.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
