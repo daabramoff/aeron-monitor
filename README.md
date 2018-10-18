@@ -1,3 +1,5 @@
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/alerts/)
+
 # Build
 
 [Gradle](http://gradle.org/) is used as build system. Latest stable JDK 8 is also required to build
