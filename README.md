@@ -1,4 +1,6 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/alerts/)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/context:java)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/context:javascript)
 
 # Build
 
