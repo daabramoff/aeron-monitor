@@ -12,10 +12,9 @@ import io.aeron.driver.MediaDriver;
 import io.aeron.driver.MediaDriver.Context;
 import io.aeron.monitor.DriverAccess;
 
-//@Disabled("Time consuming")
+@Disabled("Time consuming")
 class DriverAccessTest {
 
-@Disabled("Time consuming")
     @Test
     void shouldConnectToMediaDriver() {
         final Context ctx = new MediaDriver.Context();
@@ -33,7 +32,6 @@ class DriverAccessTest {
         ctx.close();
     }
 
-@Disabled("Time consuming")
     @Test
     void shouldDetectInactiveDriver() throws InterruptedException {
         final Context ctx = new MediaDriver.Context();
@@ -55,7 +53,6 @@ class DriverAccessTest {
         ctx.close();
     }
 
-@Disabled("Time consuming")
     @Test
     void shouldDetectAcriveStateIfConnectedToExistingDir() throws InterruptedException {
         // create driver dir
@@ -85,24 +82,4 @@ class DriverAccessTest {
 
         ctx2.close();
     }
-
-/*
-    @Test
-    void shouldNotThrowAnExceptionIfAeronDirIsDeleted() throws InterruptedException {
-        // create driver dir
-        final Context ctx = new MediaDriver.Context();
-        final MediaDriver driver = MediaDriver.launchEmbedded(ctx);
-        final String dir = driver.aeronDirectoryName();
-        driver.close();
-        ctx.close();
-        ctx.deleteAeronDirectory();
-
-        final DriverAccess driverAccess = new DriverAccess("test-name", dir);
-        driverAccess.connect();
-
-        assertFalse(driverAccess.isConnected());
-        assertFalse(driverAccess.isActive());
-
-    }
-    */
 }

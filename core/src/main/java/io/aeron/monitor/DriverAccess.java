@@ -52,6 +52,12 @@ public class DriverAccess {
         return connected;
     }
 
+    /**
+     * Checks if the driver is active.
+     * 
+     * @return <code>true</code> if the driver is active otherwise
+     *         <code>false</code>
+     */
     public boolean isActive() {
         final Consumer<String> logger = s -> {
         };
@@ -86,6 +92,9 @@ public class DriverAccess {
         return connected ? Optional.of(countersReader) : Optional.empty();
     }
 
+    /**
+     * Connects to the driver.
+     */
     public synchronized void connect() {
         if (connected) {
             return;
@@ -118,6 +127,9 @@ public class DriverAccess {
         connect();
     }
 
+    /**
+     * Reconnects to the driver if it is inactive.
+     */
     public void reconnectIfInactive() {
         if (!isActive()) {
             reconnect();
