@@ -1,4 +1,3 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/data-ferry/aeron-monitor.svg?branch=master)](https://travis-ci.com/data-ferry/aeron-monitor)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/alerts/)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/data-ferry/aeron-monitor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/data-ferry/aeron-monitor/context:java)
