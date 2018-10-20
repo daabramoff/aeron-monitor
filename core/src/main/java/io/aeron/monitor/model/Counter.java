@@ -19,6 +19,14 @@ public class Counter {
     @ApiModelProperty("Counter value")
     private final long value;
 
+    /**
+     * Constructs new instance.
+     * 
+     * @param typeId     type of the counter
+     * @param descriptor descriptor of the counter
+     * @param label      the counter label
+     * @param value      the counter value
+     */
     public Counter(
             final int typeId,
             final SystemCounterDescriptor descriptor,
