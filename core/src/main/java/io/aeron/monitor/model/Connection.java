@@ -65,7 +65,7 @@ public final class Connection {
         }
 
         final Connection other = (Connection) obj;
-        if (streamId == other.streamId || channel.equals(other.channel)) {
+        if (id == other.id && streamId == other.streamId && channel.equals(other.channel)) {
             return true;
         } else {
             return false;
