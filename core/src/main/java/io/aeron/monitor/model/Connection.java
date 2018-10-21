@@ -13,15 +13,6 @@ public final class Connection {
     private final String channel;
 
     /**
-     * Constructs new instance of the counter.
-     * 
-     * @param typeId     type of the counter
-     * @param descriptor descriptor of the counter
-     * @param label      the counter label
-     * @param value      the counter value
-     */
-    
-    /**
      * Constructs new instance.
      * 
      * @param label connection label from the correspondent counter
