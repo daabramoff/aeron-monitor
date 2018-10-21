@@ -43,14 +43,14 @@ public final class DriverAccessSupport {
     }
 
     public static List<Connection> getPublications(final DriverAccess driver) {
-        return getConnections(driver, typeId -> typeId == PUBLISHER_POS_TYPE_ID);
-    }
-
-    public static List<Connection> getSubscriptions(final DriverAccess driver) {
         return getConnections(driver,
                 typeId -> typeId == RECEIVER_POS_TYPE_ID || typeId == SUBSCRIBER_POSITION_TYPE_ID);
     }
     
+    public static List<Connection> getSubscriptions(final DriverAccess driver) {
+        return getConnections(driver, typeId -> typeId == PUBLISHER_POS_TYPE_ID);
+    }
+
     private static List<Connection> getConnections(final DriverAccess driver,
             final Predicate<Integer> cond) {
         final Set<Connection> set = new HashSet<>();
