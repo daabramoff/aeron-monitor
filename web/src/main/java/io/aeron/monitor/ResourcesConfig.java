@@ -30,7 +30,7 @@ public class ResourcesConfig {
 
     /**
      * Provides the singleton which accesses the observed drivers.
-     * 
+     *
      * @return {@link Map} where key is the driver's name and value is the driver's
      *         accessor
      */

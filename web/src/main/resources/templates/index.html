@@ -45,55 +45,40 @@
             <v-subheader>System counters</v-subheader>
           </v-flex>
           <v-flex xs6>
-            <v-data-table 
+            <v-data-table
               hide-actions
-              :headers="counters.headers" 
+              :headers="counters.headers"
               :items="counters.data"
-		      class="elevation-6">
-		      <template slot="items" slot-scope="props">
-			    <td class="text-xs-right">{{ props.item.id }}</td>
-			    <td class="text-xs-left">{{ props.item.name }}</td>
-			    <td class="text-xs-right">{{ props.item.value }}</td>
-		      </template>
+                      class="elevation-6">
+                      <template slot="items" slot-scope="props">
+                            <td class="text-xs-right">{{ props.item.id }}</td>
+                            <td class="text-xs-left">{{ props.item.name }}</td>
+                            <td class="text-xs-right">{{ props.item.value }}</td>
+                      </template>
             </v-data-table>
           </v-flex>
           <v-flex xs6></v-flex>
         </v-layout>
 
-        <!--  Connections -->
+        <!--  Streams -->
         <v-layout row wrap v-show="layoutVisible[1]">
-          <v-flex xs6>
-            <v-subheader>Publications</v-subheader>
+          <v-flex xs12>
+            <v-subheader>Streams</v-subheader>
           </v-flex>
           <v-flex xs6>
-            <v-subheader>Subscriptions</v-subheader>
-          </v-flex>
-          <v-flex xs6>
-            <v-data-table 
+            <v-data-table
               hide-actions
-              :headers="publications.headers" 
-              :items="publications.data"
-		      class="elevation-6">
-		      <template slot="items" slot-scope="props">
-			    <td class="text-xs-right">{{ props.item.id }}</td>
-			    <td class="text-xs-left">{{ props.item.channel }}</td>
-			    <td class="text-xs-right">{{ props.item.streamId }}</td>
-		      </template>
+              :headers="streams.headers"
+              :items="streams.data"
+                      class="elevation-6">
+                      <template slot="items" slot-scope="props">
+                            <td class="text-xs-right">{{ props.item.sessionId }}</td>
+                            <td class="text-xs-left">{{ props.item.channel }}</td>
+                            <td class="text-xs-right">{{ props.item.streamId }}</td>
+                      </template>
             </v-data-table>
           </v-flex>
-          <v-flex xs6>
-            <v-data-table 
-              hide-actions
-              :headers="subscriptions.headers" 
-              :items="subscriptions.data"
-		      class="elevation-6">
-		      <template slot="items" slot-scope="props">
-			    <td class="text-xs-right">{{ props.item.id }}</td>
-			    <td class="text-xs-left">{{ props.item.channel }}</td>
-			    <td class="text-xs-right">{{ props.item.streamId }}</td>
-		      </template>
-            </v-data-table>
-          </v-flex>
+          <v-flex xs6></v-flex>
         </v-layout>
       </v-container>
     </v-content>
@@ -104,7 +89,7 @@
           slot="activator"
           :items="view.autoUpdateList"
           v-model.number="view.autoUpdateTimeout"
-		  class="grey--text caption">
+                  class="grey--text caption">
         </v-select>
         <span>Refresh period, sec.</span>
       </v-tooltip>
@@ -115,14 +100,14 @@
           slot="activator"
           :items="drivers"
           v-model.number="selectedDriver.name"
-		  class="grey--text caption">
+                  class="grey--text caption">
         </v-select>
         <span>Driver</span>
       </v-tooltip>
       <v-chip label outline v-bind:style="connectionState.style">
         {{ connectionState.label }}
       </v-chip>
-      
+
       <v-spacer></v-spacer>
       <div class="grey--text caption">v[[${app_version}]]</div>
     </v-footer>

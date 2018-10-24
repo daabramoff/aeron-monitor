@@ -2,9 +2,9 @@ var app = new Vue({
   el: '#app',
 
   methods: {
-    
+
     pollDriver() {
-      const URL = '/api/v1//drivers/';
+      const URL = '/api/v1/drivers/';
 
       var self = this;
       var poll =  function(){
@@ -14,8 +14,8 @@ var app = new Vue({
           var d = self.$data.connectionState;
           var label = 'Disconnected';
           var color = 'red';
-          if (this.status == 200) {
-            const resp = JSON.parse(Http.responseText); 
+          if (this.readyState == 4 && this.status == 200) {
+            const resp = JSON.parse(Http.responseText);
             if (!resp.active) {
               label = 'Stale';
               color = 'orange';
@@ -31,7 +31,7 @@ var app = new Vue({
         };
         Http.send();
       };
-      
+
       if (this.driverPollIntervalId) {
         clearInterval(this.driverPollIntervalId);
       }
@@ -43,13 +43,13 @@ var app = new Vue({
     },
 
     getDrivers() {
-      const URL = '/api/v1//drivers';
+      const URL = '/api/v1/drivers';
       var self = this;
       const Http = new XMLHttpRequest();
       Http.open('GET', URL);
       Http.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          const resp = JSON.parse(Http.responseText); 
+          const resp = JSON.parse(Http.responseText);
           self.$data.drivers = resp.slice();
           self.$data.selectedDriver.name = self.$data.drivers[0];
           self.doPoll(0);
@@ -57,7 +57,7 @@ var app = new Vue({
       };
       Http.send();
     },
-    
+
     getSystemCounters() {
       const URL = '/api/v1/cnc/systemCounters/';
       var self = this;
@@ -66,8 +66,8 @@ var app = new Vue({
       Http.onreadystatechange = function() {
         var data = self.$data.counters.data;
         if (this.readyState == 4 && this.status == 200) {
-          const resp = JSON.parse(Http.responseText); 
-          const counters = resp.counters; 
+          const resp = JSON.parse(Http.responseText);
+          const counters = resp.counters;
           if (!counters) {
             return;
           }
@@ -93,35 +93,33 @@ var app = new Vue({
         }
       };
       Http.send();
-    }, 
-    
-    getConnections() {
-      var self = this;
-      var poll = function(url, data) {
-        const Http = new XMLHttpRequest();
-        Http.open('GET', url + self.$data.selectedDriver.name);
-        Http.onreadystatechange = function() {
-          data.length = 0;
-          if (this.readyState == 4 && this.status == 200) {
-            const resp = JSON.parse(Http.responseText); 
-            resp.forEach(e => {
-              data.push({
-                id: e.id,
-                streamId: e.streamId,
-                channel: e.channel
-              });
-            });
-          }
-        };
-        Http.send();
-      };
-      poll('/api/v1/cnc/publications/',  self.$data.publications.data);
-      poll('/api/v1/cnc/subscriptions/', self.$data.subscriptions.data);
     },
-    
+
+    getStreams() {
+      const URL = '/api/v1/cnc/streams/';
+      var self = this;
+      var data = self.$data.streams.data;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL + self.$data.selectedDriver.name);
+      Http.onreadystatechange = function() {
+        data.length = 0;
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          resp.forEach(e => {
+            data.push({
+              sessionId: e.sessionId,
+              streamId: e.streamId,
+              channel: e.channel
+            });
+          });
+        }
+      };
+      Http.send();
+    },
+
     doPoll(idx) {
       var self = this;
-      const pollFunctions = [this.getSystemCounters, this.getConnections];
+      const pollFunctions = [this.getSystemCounters, this.getStreams];
 
       self.layoutPollIntervalIds.forEach(function(id) {
         clearInterval(id);
@@ -130,13 +128,13 @@ var app = new Vue({
       const t = self.$data.view.autoUpdateTimeout;
       if (t) {
         const f =  pollFunctions[idx];
-        f(); 
+        f();
         self.layoutPollIntervalIds[idx] = setInterval(function() {
           f();
         }.bind(this), 1000 * t);
       }
     },
-    
+
     onDrawerItem(idx, e) {
       var d = this.$data.layoutVisible;
       d.fill(false);
@@ -145,37 +143,37 @@ var app = new Vue({
       this.doPoll(idx);
     },
   },
-  
+
   created: function () {
     this.getDrivers();
   },
-  
+
   watch: {
     'selectedDriver.name': function () {
       this.pollDriver();
     },
-    
+
     'view.autoUpdateTimeout': function () {
       this.doPoll(this.layoutVisible.indexOf(true));
     }
   },
-  
+
   data: {
     drawer: null,
 
     drawerItems: [
       { icon: 'track_changes', text: 'System counters' },
-      { icon: 'import_export', text: 'Connections' },
+      { icon: 'import_export', text: 'Streams' },
     ],
-    
-    layoutVisible:         [true], 
+
+    layoutVisible:         [true],
     layoutPollIntervalIds: [],
 
     view: {
       autoUpdateTimeout: 5,
       autoUpdateList: Array.from(Array(11).keys()),
     },
-    
+
     connectionState: {
       label: 'Disconnected',
       style: {
@@ -185,41 +183,32 @@ var app = new Vue({
         'text-align': 'center'
       },
     },
-    
+
     drivers: [],
 
     selectedDriver: {
       name: '',
       connected: false,
       active: false
-    }, 
-    
+    },
+
     counters: {
       headers: [
-        { text: 'Id',         value: 'id',      align: 'right', sortable: true, width: 5 },
-        { text: 'Name',       value: 'name',    align: 'left',  sortable: true  },
-        { text: 'Value',      value: 'value',   align: 'right', sortable: false },
+        { text: 'Id',      value: 'id',      align: 'right', sortable: true, width: 5 },
+        { text: 'Name',    value: 'name',    align: 'left',  sortable: true  },
+        { text: 'Value',   value: 'value',   align: 'right', sortable: false },
       ],
       data: []
     },
-    
-    publications: {
+
+    streams: {
       headers: [
-        { text: 'Id',         value: 'id',       align: 'right', sortable: true, width: 5 },
-        { text: 'Channel',    value: 'channel',  align: 'left',  sortable: true },
-        { text: 'Stream Id',  value: 'stream',   align: 'right', sortable: true },
+        { text: 'Session', value: 'id',       align: 'right', sortable: true, width: 5 },
+        { text: 'Channel', value: 'channel',  align: 'left',  sortable: true },
+        { text: 'Stream',  value: 'stream',   align: 'right', sortable: true },
       ],
       data: []
     },
-    
-    subscriptions: {
-      headers: [
-        { text: 'Id',         value: 'id',       align: 'right', sortable: true, width: 5 },
-        { text: 'Channel',    value: 'channel',  align: 'left',  sortable: true },
-        { text: 'Stream Id',  value: 'stream',   align: 'right', sortable: true },
-      ],
-      data: []
-    },
-    
+
   },
 })

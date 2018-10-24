@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Loads {@link Plugin}s on the application startup.
- * 
+ *
  * <p>Uses {@link ServiceLoader} to find plug-ins in the application classpath
  */
 @Component

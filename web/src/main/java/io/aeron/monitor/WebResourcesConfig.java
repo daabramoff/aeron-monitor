@@ -23,7 +23,7 @@ public class WebResourcesConfig extends WebMvcConfigurationSupport {
 
     /**
      * Configures {@link Swagger} documentation.
-     * 
+     *
      * @return Configured documentation
      */
     @Bean
