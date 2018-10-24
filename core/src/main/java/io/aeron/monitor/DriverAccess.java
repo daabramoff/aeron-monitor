@@ -43,18 +43,18 @@ public class DriverAccess {
     public String getName() {
         return name;
     }
-    
+
     public String getDir() {
         return dir;
     }
-    
+
     public boolean isConnected() {
         return connected;
     }
 
     /**
      * Checks if the driver is active.
-     * 
+     *
      * @return <code>true</code> if the driver is active otherwise
      *         <code>false</code>
      */
@@ -121,7 +121,7 @@ public class DriverAccess {
             }
         }
     }
-    
+
     public synchronized void reconnect() {
         connected = false;
         connect();
@@ -135,7 +135,7 @@ public class DriverAccess {
             reconnect();
         }
     }
-    
+
     @Override
     public String toString() {
         return "DriverAccess [name=" + name + ", dir=" + dir + "]";

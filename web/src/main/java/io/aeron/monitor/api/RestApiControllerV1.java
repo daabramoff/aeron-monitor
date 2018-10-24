@@ -3,7 +3,7 @@ package io.aeron.monitor.api;
 import io.aeron.monitor.Const;
 import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.DriverAccessSupport;
-import io.aeron.monitor.model.Connection;
+import io.aeron.monitor.model.Stream;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,18 +30,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/v1", method = RequestMethod.GET)
 public class RestApiControllerV1 {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(RestApiControllerV1.class);
 
     private static final String RESPONSE_KEY_ACTIVE = "active";
     private static final String RESPONSE_KEY_COUNTERS = "counters";
     private static final String RESPONSE_KEY_CNC_VERSION = "cncVersion";
     private static final String RESPONSE_KEY_DRIVER_NAME = "driverName";
-    
+
     @Autowired
     @Qualifier(Const.BEAN_NAME_DRIVERS)
     private Map<String, DriverAccess> drivers;
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "drivers")
     @ApiOperation("Returns counters related to the Media Driver entirely")
     public Set<String> getDrivers() {
@@ -50,7 +50,7 @@ public class RestApiControllerV1 {
 
     /**
      * Returns driver information.
-     * 
+     *
      * @param name name of the driver
      * @return {@link Map} which contains the driver's name, CNC version and active
      *         status
@@ -58,8 +58,8 @@ public class RestApiControllerV1 {
     @RequestMapping(method = RequestMethod.GET, value = "drivers/{name}")
     @ApiOperation("Returns driver information")
     public ResponseEntity<Map<String, Object>> getDriver(
-            @PathVariable("name") 
-            @ApiParam("Driver name") 
+            @PathVariable("name")
+            @ApiParam("Driver name")
             final String name) {
         final Optional<DriverAccess> d = getConnectedDriver(name);
         if (d.isPresent()) {
@@ -76,7 +76,7 @@ public class RestApiControllerV1 {
 
     /**
      * Returns system counters for the driver.
-     * 
+     *
      * @param name name of the driver
      * @return {@link Map} which contains name of the driver, active status and
      *         {@link List} of the counters
@@ -84,8 +84,8 @@ public class RestApiControllerV1 {
     @RequestMapping(method = RequestMethod.GET, value = "cnc/systemCounters/{name}")
     @ApiOperation("Returns system counters")
     public ResponseEntity<Map<String, Object>> getCounters(
-            @PathVariable("name") 
-            @ApiParam("Driver name") 
+            @PathVariable("name")
+            @ApiParam("Driver name")
             final String name) {
         final Optional<DriverAccess> d = getConnectedDriver(name);
         if (d.isPresent()) {
@@ -101,38 +101,21 @@ public class RestApiControllerV1 {
     }
 
     /**
-     * Returns publications for the driver.
-     * 
+     * Returns streams associated with the driver.
+     *
      * @param name name of the driver
-     * @return {@link List} of publications
+     * @return {@link List} of streams
      */
-    @RequestMapping(method = RequestMethod.GET, value = "cnc/publications/{name}")
-    @ApiOperation("Returns publications")
-    public ResponseEntity<List<Connection>> getPublications(
-            @PathVariable("name") 
-            @ApiParam("Driver name") 
-            final String name) {
-        final Optional<DriverAccess> d = getConnectedDriver(name);
-        return d.isPresent()
-                ? new ResponseEntity<>(DriverAccessSupport.getPublications(d.get()), HttpStatus.OK)
-                : new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
-    }
 
-    /**
-     * Returns subscriptions for the driver.
-     * 
-     * @param name name of the driver
-     * @return {@link List} of subscriptions 
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "cnc/subscriptions/{name}")
-    @ApiOperation("Returns subscriptions")
-    public ResponseEntity<List<Connection>> getSubscriptions(
-            @PathVariable("name") 
-            @ApiParam("Driver name") 
+    @RequestMapping(method = RequestMethod.GET, value = "cnc/streams/{name}")
+    @ApiOperation("Returns publications")
+    public ResponseEntity<List<Stream>> getPublications(
+            @PathVariable("name")
+            @ApiParam("Driver name")
             final String name) {
         final Optional<DriverAccess> d = getConnectedDriver(name);
         return d.isPresent()
-                ? new ResponseEntity<>(DriverAccessSupport.getSubscriptions(d.get()), HttpStatus.OK)
+                ? new ResponseEntity<>(DriverAccessSupport.getStreams(d.get()), HttpStatus.OK)
                 : new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
@@ -154,7 +137,7 @@ public class RestApiControllerV1 {
             LOG.debug("Connected driver found: {}", name);
             return Optional.of(d);
         }
-        
+
         LOG.debug("Connecting to driver...");
         d.connect();
         if (d.isConnected()) {

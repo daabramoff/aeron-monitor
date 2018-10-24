@@ -15,7 +15,7 @@ import io.aeron.driver.MediaDriver;
 import io.aeron.driver.MediaDriver.Context;
 import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.DriverAccessSupport;
-import io.aeron.monitor.model.Connection;
+import io.aeron.monitor.model.Stream;
 
 class DriverAccessSupportTest {
 
@@ -55,18 +55,10 @@ class DriverAccessSupportTest {
         final DriverAccess driverAccess = new DriverAccess("test", driver.aeronDirectoryName());
         driverAccess.connect();
 
-        final List<Connection> pubs = DriverAccessSupport.getPublications(driverAccess);
-        assertEquals(1,
-                pubs.stream() 
-                        .filter(c -> c.getChannel().equals(channel) && c.getStreamId() == streamId)
-                        .count());
-        assertEquals(n, pubs.size());
-
-        final List<Connection> subs = DriverAccessSupport.getSubscriptions(driverAccess);
-        assertEquals(1,
-                subs.stream() 
-                        .filter(c -> c.getChannel().equals(channel) && c.getStreamId() == streamId)
-                        .count());
-        assertEquals(n, subs.size());
+        final List<Stream> streams = DriverAccessSupport.getStreams(driverAccess);
+        assertEquals(n, streams.size());
+        assertEquals(1, streams.stream()
+                .filter(c -> c.getChannel().equals(channel) && c.getStreamId() == streamId)
+                .count());
     }
 }

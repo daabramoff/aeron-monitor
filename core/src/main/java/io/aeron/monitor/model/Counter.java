@@ -4,7 +4,7 @@ import io.aeron.driver.status.SystemCounterDescriptor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "System counter infoumation")
+@ApiModel(description = "System counter")
 public class Counter {
 
     @ApiModelProperty("Counter ID")

@@ -13,7 +13,7 @@ public class IndexPageController {
     private static final String TEMPLATE_KEY_APP_VERSION = "app_version";
     private static final String TEMPLATE_KEY_PAGE_TITLE = "page_title";
     private static final String TEMPLATE_KEY_TOOLBAR_TITLE = "toolbar_title";
-    
+
     @Value("${app.version}")
     private String appVersion;
 
@@ -25,7 +25,7 @@ public class IndexPageController {
 
     /**
      * Provides response for the root page.
-     * 
+     *
      * @param model Template model
      * @return root page template
      */

@@ -19,7 +19,7 @@ public class ThreadPoolConfig {
 
     /**
      * Creates unified thread pool for the application.
-     * 
+     *
      * @return {@link ThreadPool} the thread pool
      * @throws Exception if the pool could not start
      */
