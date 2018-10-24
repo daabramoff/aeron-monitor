@@ -5,6 +5,7 @@ import static io.aeron.CncFileDescriptor.cncVersionOffset;
 import io.aeron.Aeron;
 import io.aeron.CncFileDescriptor;
 import io.aeron.CommonContext;
+import io.aeron.driver.reports.LossReportUtil;
 
 import java.io.File;
 import java.nio.MappedByteBuffer;
@@ -14,6 +15,8 @@ import java.util.function.Consumer;
 
 import org.agrona.DirectBuffer;
 import org.agrona.IoUtil;
+import org.agrona.concurrent.AtomicBuffer;
+import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.status.CountersReader;
 
@@ -28,6 +31,7 @@ public class DriverAccess {
     private DirectBuffer cncMetaData;
     private ManyToOneRingBuffer toDriver;
     private CountersReader countersReader;
+    private AtomicBuffer lossReportBuffer;
 
     private boolean connected;
 
@@ -92,6 +96,10 @@ public class DriverAccess {
         return connected ? Optional.of(countersReader) : Optional.empty();
     }
 
+    public Optional<AtomicBuffer> getLossReportBuffer() {
+        return connected ? Optional.of(lossReportBuffer) : Optional.empty();
+    }
+
     /**
      * Connects to the driver.
      */
@@ -102,6 +110,7 @@ public class DriverAccess {
 
         try {
             final File cncFile = new File(dir, CncFileDescriptor.CNC_FILE);
+            final File lossReportFile = LossReportUtil.file(dir);
 
             cncByteBuffer = IoUtil.mapExistingFile(cncFile, "cnc");
             cncMetaData = CncFileDescriptor.createMetaDataBuffer(cncByteBuffer);
@@ -113,6 +122,9 @@ public class DriverAccess {
                     CncFileDescriptor.createCountersMetaDataBuffer(cncByteBuffer, cncMetaData),
                     CncFileDescriptor.createCountersValuesBuffer(cncByteBuffer, cncMetaData),
                     StandardCharsets.US_ASCII);
+
+            lossReportBuffer = new UnsafeBuffer(
+                    IoUtil.mapExistingFile(lossReportFile, "Loss Report"));
 
             connected = true;
         } catch (final Exception ex) {
