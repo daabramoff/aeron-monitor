@@ -10,8 +10,10 @@ import static io.aeron.driver.status.StreamPositionCounter.SESSION_ID_OFFSET;
 import static io.aeron.driver.status.StreamPositionCounter.STREAM_ID_OFFSET;
 import static io.aeron.driver.status.SystemCounterDescriptor.SYSTEM_COUNTER_TYPE_ID;
 
+import io.aeron.driver.reports.LossReportReader;
 import io.aeron.driver.status.SystemCounterDescriptor;
 import io.aeron.monitor.model.Counter;
+import io.aeron.monitor.model.LossRecord;
 import io.aeron.monitor.model.Stream;
 
 import java.util.ArrayList;
@@ -34,8 +36,8 @@ public final class DriverAccessSupport {
     public static List<Counter> getSystemCounters(final DriverAccess driver) {
         final List<Counter> res = new ArrayList<>();
         driver.reconnectIfInactive();
-        driver.getCountersReader()
-                .ifPresent(r -> r.forEach((counterId, typeId, keyBuffer, label) -> {
+        driver.getCountersReader().ifPresent(r ->
+                r.forEach((counterId, typeId, keyBuffer, label) -> {
                     if (typeId == SYSTEM_COUNTER_TYPE_ID) {
                         final long value = r.getCounterValue(counterId);
                         final Counter c = new Counter(typeId,
@@ -55,8 +57,8 @@ public final class DriverAccessSupport {
     public static List<Stream> getStreams(final DriverAccess driver) {
         final Set<Stream> set = new HashSet<>();
         driver.reconnectIfInactive();
-        driver.getCountersReader()
-                .ifPresent(r -> r.forEach((counterId, typeId, keyBuffer, label) -> {
+        driver.getCountersReader().ifPresent(r ->
+                r.forEach((counterId, typeId, keyBuffer, label) -> {
                     if ((typeId >= PUBLISHER_LIMIT_TYPE_ID && typeId <= RECEIVER_POS_TYPE_ID)
                             || typeId == SENDER_LIMIT_TYPE_ID || typeId == PER_IMAGE_TYPE_ID
                             || typeId == PUBLISHER_POS_TYPE_ID) {
@@ -67,6 +69,25 @@ public final class DriverAccessSupport {
                 }));
         final List<Stream> res = new ArrayList<>(set);
         Collections.sort(res, (lhs, rhs) -> lhs.getSessionId() - rhs.getSessionId());
+        return res;
+    }
+     
+    /**
+     * Returns loss records for the driver.
+     * 
+     * @param driver driver
+     * @return loss records
+     */
+    public static List<LossRecord> getLossRecords(final DriverAccess driver) {
+        final List<LossRecord> res = new ArrayList<>();
+        driver.reconnectIfInactive();
+        driver.getLossReportBuffer()
+                .ifPresent(r -> LossReportReader.read(r, (observationCount, totalBytesLost,
+                firstObservationTimestamp,
+                lastObservationTimestamp, sessionId, streamId, channel,
+                source) -> res.add(new LossRecord(observationCount, totalBytesLost,
+                firstObservationTimestamp, lastObservationTimestamp,
+                sessionId, streamId, channel, source))));
         return res;
     }
 }
