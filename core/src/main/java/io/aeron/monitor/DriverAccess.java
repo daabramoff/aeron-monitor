@@ -32,6 +32,7 @@ public class DriverAccess {
     private ManyToOneRingBuffer toDriver;
     private CountersReader countersReader;
     private AtomicBuffer lossReportBuffer;
+    private AtomicBuffer errorLogBuffer;
 
     private boolean connected;
 
@@ -100,6 +101,10 @@ public class DriverAccess {
         return connected ? Optional.of(lossReportBuffer) : Optional.empty();
     }
 
+    public Optional<AtomicBuffer> getErrorLogBuffer() {
+        return connected ? Optional.of(errorLogBuffer) : Optional.empty();
+    }
+
     /**
      * Connects to the driver.
      */
@@ -125,6 +130,8 @@ public class DriverAccess {
 
             lossReportBuffer = new UnsafeBuffer(
                     IoUtil.mapExistingFile(lossReportFile, "Loss Report"));
+
+            errorLogBuffer = CncFileDescriptor.createErrorLogBuffer(cncByteBuffer, cncMetaData);
 
             connected = true;
         } catch (final Exception ex) {

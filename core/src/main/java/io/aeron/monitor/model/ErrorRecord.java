@@ -7,14 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 
-@ApiModel(description = "Loss record")
-public class LossRecord {
+@ApiModel(description = "Error record")
+public class ErrorRecord {
 
     @ApiModelProperty("Observation count")
     private final long observationCount;
-
-    @ApiModelProperty("Total bytes lost")
-    private final long totalBytesLost;
 
     @ApiModelProperty("First observation timestamp")
     private final long firstObservationTimestamp;
@@ -22,55 +19,30 @@ public class LossRecord {
     @ApiModelProperty("Last observation timestamp")
     private final long lastObservationTimestamp;
 
-    @ApiModelProperty("Session ID")
-    private final int sessionId;
-
-    @ApiModelProperty("Stream ID")
-    private final int streamId;
-
-    @ApiModelProperty("Channel ID")
-    private final String channel;
-
-    @ApiModelProperty("Source")
-    private final String source;
+    @ApiModelProperty("Encoded exception")
+    private final String encodedException;
 
     /**
      * Constructs new instance.
      *
      * @param observationCount          observation count
-     * @param totalBytesLost            total bytes lost
      * @param firstObservationTimestamp first observation timestamp
      * @param lastObservationTimestamp  last observation timestamp
-     * @param sessionId                 session id
-     * @param streamId                  stream id
-     * @param channel                   channel
-     * @param source                    source
+     * @param encodedException          encoded exception
      */
-    public LossRecord(
-            final long observationCount,
-            final long totalBytesLost,
+    public ErrorRecord(
+            final int observationCount,
             final long firstObservationTimestamp,
-            final long lastObservationTimestamp, 
-            final int sessionId,
-            final int streamId,
-            final String channel,
-            final String source) {
+            final long lastObservationTimestamp,
+            final String encodedException) {
         this.observationCount = observationCount;
-        this.totalBytesLost = totalBytesLost;
         this.firstObservationTimestamp = firstObservationTimestamp;
         this.lastObservationTimestamp = lastObservationTimestamp;
-        this.sessionId = sessionId;
-        this.streamId = streamId;
-        this.channel = channel;
-        this.source = source;
+        this.encodedException = encodedException;
     }
 
     public long getObservationCount() {
         return observationCount;
-    }
-
-    public long getTotalBytesLost() {
-        return totalBytesLost;
     }
 
     public long getFirstObservationTimestamp() {
@@ -89,33 +61,17 @@ public class LossRecord {
         return DATE_FORMAT.get().format(new Date(lastObservationTimestamp));
     }
 
-    public int getSessionId() {
-        return sessionId;
-    }
-
-    public int getStreamId() {
-        return streamId;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public String getSource() {
-        return source;
+    public String getEncodedException() {
+        return encodedException;
     }
 
     @Override
     public String toString() {
-        return "LossRecord ["
+        return "ErrorRecord ["
                 + "observationCount=" + observationCount
-                + ", totalBytesLost=" + totalBytesLost
                 + ", firstObservationTimestamp=" + firstObservationTimestamp
                 + ", lastObservationTimestamp=" + lastObservationTimestamp
-                + ", sessionId=" + sessionId
-                + ", streamId=" + streamId
-                + ", channel=" + channel
-                + ", source=" + source
+                + ", encodedException=" + encodedException
                 + "]";
     }
 }

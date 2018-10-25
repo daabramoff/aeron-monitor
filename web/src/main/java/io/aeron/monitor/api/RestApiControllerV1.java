@@ -3,6 +3,7 @@ package io.aeron.monitor.api;
 import io.aeron.monitor.Const;
 import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.DriverAccessSupport;
+import io.aeron.monitor.model.ErrorRecord;
 import io.aeron.monitor.model.LossRecord;
 import io.aeron.monitor.model.Stream;
 import io.swagger.annotations.Api;
@@ -109,7 +110,7 @@ public class RestApiControllerV1 {
      */
     @RequestMapping(method = RequestMethod.GET, value = "cnc/streams/{name}")
     @ApiOperation("Returns publications")
-    public ResponseEntity<List<Stream>> getPublications(
+    public ResponseEntity<List<Stream>> getStreams(
             @PathVariable("name")
             @ApiParam("Driver name")
             final String name) {
@@ -134,6 +135,24 @@ public class RestApiControllerV1 {
         final Optional<DriverAccess> d = getConnectedDriver(name);
         return d.isPresent()
                 ? new ResponseEntity<>(DriverAccessSupport.getLossRecords(d.get()), HttpStatus.OK)
+                : new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Returns error records for the driver.
+     *
+     * @param name name of the driver
+     * @return {@link List} of error records
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "errorRecords/{name}")
+    @ApiOperation("Returns error records")
+    public ResponseEntity<List<ErrorRecord>> getErrorRecords(
+            @PathVariable("name")
+            @ApiParam("Driver name")
+            final String name) {
+        final Optional<DriverAccess> d = getConnectedDriver(name);
+        return d.isPresent()
+                ? new ResponseEntity<>(DriverAccessSupport.getErrorRecords(d.get()), HttpStatus.OK)
                 : new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
