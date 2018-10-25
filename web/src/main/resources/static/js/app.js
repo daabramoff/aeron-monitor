@@ -105,13 +105,23 @@ var app = new Vue({
         data.length = 0;
         if (this.readyState == 4 && this.status == 200) {
           const resp = JSON.parse(Http.responseText);
-          resp.forEach(e => {
-            data.push({
-              sessionId: e.sessionId,
-              streamId: e.streamId,
-              channel: e.channel
-            });
-          });
+          resp.forEach(e => { data.push(e); });
+        }
+      };
+      Http.send();
+    },
+
+    getLossRecords() {
+      const URL = '/api/v1/cnc/lossRecords/';
+      var self = this;
+      var data = self.$data.lossRecords.data;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL + self.$data.selectedDriver.name);
+      Http.onreadystatechange = function() {
+        data.length = 0;
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          resp.forEach(e => { data.push(e); });
         }
       };
       Http.send();
@@ -119,7 +129,11 @@ var app = new Vue({
 
     doPoll(idx) {
       var self = this;
-      const pollFunctions = [this.getSystemCounters, this.getStreams];
+      const pollFunctions = [
+        this.getSystemCounters,
+        this.getStreams,
+        this.getLossRecords,
+      ];
 
       self.layoutPollIntervalIds.forEach(function(id) {
         clearInterval(id);
@@ -164,6 +178,7 @@ var app = new Vue({
     drawerItems: [
       { icon: 'track_changes', text: 'System counters' },
       { icon: 'import_export', text: 'Streams' },
+      { icon: 'data_usage',    text: 'Loss records' },
     ],
 
     layoutVisible:         [true],
@@ -210,5 +225,18 @@ var app = new Vue({
       data: []
     },
 
+    lossRecords: {
+      headers: [
+        { text: 'Session',           value: 'session', align: 'right', sortable: true },
+        { text: 'Channel',           value: 'channel', align: 'left',  sortable: true },
+        { text: 'Stream',            value: 'stream',  align: 'right', sortable: true },
+        { text: 'Observation count', value: 'count',   align: 'right', sortable: true },
+        { text: 'Total bytes lost',  value: 'total',   align: 'right', sortable: true },
+        { text: 'First observation', value: 'first',   align: 'left',  sortable: true },
+        { text: 'Last observation',  value: 'last',    align: 'left',  sortable: true },
+        { text: 'Source',            value: 'source',  align: 'left',  sortable: true },
+      ],
+      data: []
+    },
   },
 })
