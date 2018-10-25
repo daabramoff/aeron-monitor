@@ -13,6 +13,7 @@ import static io.aeron.driver.status.SystemCounterDescriptor.SYSTEM_COUNTER_TYPE
 import io.aeron.driver.reports.LossReportReader;
 import io.aeron.driver.status.SystemCounterDescriptor;
 import io.aeron.monitor.model.Counter;
+import io.aeron.monitor.model.ErrorRecord;
 import io.aeron.monitor.model.LossRecord;
 import io.aeron.monitor.model.Stream;
 
@@ -21,6 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.agrona.concurrent.errors.ErrorLogReader;
 
 public final class DriverAccessSupport {
 
@@ -88,6 +91,24 @@ public final class DriverAccessSupport {
                 source) -> res.add(new LossRecord(observationCount, totalBytesLost,
                 firstObservationTimestamp, lastObservationTimestamp,
                 sessionId, streamId, channel, source))));
+        return res;
+    }
+
+    /**
+     * Returns error records for the driver.
+     * 
+     * @param driver driver
+     * @return error records
+     */
+    public static List<ErrorRecord> getErrorRecords(final DriverAccess driver) {
+        final List<ErrorRecord> res = new ArrayList<>();
+        driver.reconnectIfInactive();
+        driver.getErrorLogBuffer()
+                .ifPresent(r -> ErrorLogReader.read(r, (observationCount,
+                firstObservationTimestamp,
+                lastObservationTimestamp, encodedException) -> res.add(
+                new ErrorRecord(observationCount, firstObservationTimestamp,
+                lastObservationTimestamp, encodedException))));
         return res;
     }
 }
