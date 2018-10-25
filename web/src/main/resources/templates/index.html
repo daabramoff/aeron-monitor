@@ -80,6 +80,32 @@
           </v-flex>
           <v-flex xs6></v-flex>
         </v-layout>
+
+        <!--  Loss records -->
+        <v-layout row wrap v-show="layoutVisible[2]">
+          <v-flex xs12>
+            <v-subheader>Loss records</v-subheader>
+          </v-flex>
+          <v-flex xs8>
+            <v-data-table
+              hide-actions
+              :headers="lossRecords.headers"
+              :items="lossRecords.data"
+                      class="elevation-6">
+                      <template slot="items" slot-scope="props">
+                            <td class="text-xs-right">{{ props.item.sessionId }}</td>
+                            <td class="text-xs-left">{{ props.item.channel }}</td>
+                            <td class="text-xs-right">{{ props.item.streamId }}</td>
+                            <td class="text-xs-right">{{ props.item.observationCount }}</td>
+                            <td class="text-xs-right">{{ props.item.totalBytesLost }}</td>
+                            <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+                            <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+                            <td class="text-xs-left">{{ props.item.source}}</td>
+                      </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs4></v-flex>
+        </v-layout>
       </v-container>
     </v-content>
 
