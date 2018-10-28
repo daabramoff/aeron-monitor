@@ -42,6 +42,20 @@ var app = new Vue({
       }.bind(self), 5000);
     },
 
+    getSysInfo() {
+      const URL = '/api/v1/sysInfo';
+      var self = this;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL);
+      Http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          self.$data.sysInfo.data.forEach(e => { e.value = resp[e.key]; });
+        }
+      };
+      Http.send();
+    },
+
     getDrivers() {
       const URL = '/api/v1/drivers';
       var self = this;
@@ -176,6 +190,7 @@ var app = new Vue({
   },
 
   created: function () {
+    this.getSysInfo();
     this.getDrivers();
   },
 
@@ -193,11 +208,12 @@ var app = new Vue({
     drawer: null,
 
     drawerItems: [
-      { icon: 'track_changes', text: 'System counters' },
+      { icon: 'track_changes', text: 'Counters' },
       { icon: 'import_export', text: 'Streams' },
       { icon: 'data_usage',    text: 'Loss records' },
       { icon: 'error_outline', text: 'Error records' },
-
+      { divider: true },
+      { icon: 'info',          text: 'System' },
     ],
 
     layoutVisible:         [true],
@@ -266,6 +282,21 @@ var app = new Vue({
         { text: 'Observation count', value: 'count',   align: 'left',  sortable: true },
       ],
       data: []
+    },
+
+    sysInfo: {
+      headers: [
+        { text: 'Label', value: 'key',    align: 'left',  sortable: false },
+        { text: 'Value', value: 'value',  align: 'left',  sortable: false },
+      ],
+      data: [
+        { label: 'Host name',       key: 'hostName'     },
+        { label: 'PID',             key: 'jvmPid'       },
+        { label: 'JVM name',        key: 'jvmName'      },
+        { label: 'JVM version',     key: 'jvmVersion'   },
+        { label: 'JVM vendor',      key: 'jvmVendor'    },
+        { label: 'JVM start time',  key: 'jvmStartTime' },
+      ]
     },
   },
 })
