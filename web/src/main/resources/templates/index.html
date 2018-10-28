@@ -128,6 +128,26 @@
           </v-flex>
           <v-flex xs4></v-flex>
         </v-layout>
+
+        <!--  System information -->
+        <v-layout row wrap v-show="layoutVisible[5]">
+          <v-flex xs12>
+            <v-subheader>System information</v-subheader>
+          </v-flex>
+          <v-flex xs6>
+            <v-data-table
+              hide-actions
+              hide-headers
+              :items="sysInfo.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.label}}</td>
+                <td class="text-xs-left">{{ props.item.value}}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs6></v-flex>
+        </v-layout>
       </v-container>
     </v-content>
 
