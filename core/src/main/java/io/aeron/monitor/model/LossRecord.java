@@ -1,10 +1,11 @@
 package io.aeron.monitor.model;
 
-import static io.aeron.monitor.model.Util.DATE_FORMAT; 
+import static io.aeron.monitor.model.Util.DATE_FORMAT;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 @ApiModel(description = "Loss record")
@@ -19,8 +20,14 @@ public class LossRecord {
     @ApiModelProperty("First observation timestamp")
     private final long firstObservationTimestamp;
 
+    @ApiModelProperty("First observation time")
+    private final String firstObservationTime;
+
     @ApiModelProperty("Last observation timestamp")
     private final long lastObservationTimestamp;
+
+    @ApiModelProperty("Last observation time")
+    private final String lastObservationTime;
 
     @ApiModelProperty("Session ID")
     private final int sessionId;
@@ -50,7 +57,7 @@ public class LossRecord {
             final long observationCount,
             final long totalBytesLost,
             final long firstObservationTimestamp,
-            final long lastObservationTimestamp, 
+            final long lastObservationTimestamp,
             final int sessionId,
             final int streamId,
             final String channel,
@@ -63,6 +70,10 @@ public class LossRecord {
         this.streamId = streamId;
         this.channel = channel;
         this.source = source;
+
+        final DateFormat df = DATE_FORMAT.get();
+        firstObservationTime = df.format(new Date(firstObservationTimestamp));
+        lastObservationTime = df.format(new Date(lastObservationTimestamp));
     }
 
     public long getObservationCount() {
@@ -78,7 +89,7 @@ public class LossRecord {
     }
 
     public String getFirstObservationTime() {
-        return DATE_FORMAT.get().format(new Date(firstObservationTimestamp));
+        return firstObservationTime;
     }
 
     public long getLastObservationTimestamp() {
@@ -86,7 +97,7 @@ public class LossRecord {
     }
 
     public String getLastObservationTime() {
-        return DATE_FORMAT.get().format(new Date(lastObservationTimestamp));
+        return lastObservationTime;
     }
 
     public int getSessionId() {
@@ -111,7 +122,9 @@ public class LossRecord {
                 + "observationCount=" + observationCount
                 + ", totalBytesLost=" + totalBytesLost
                 + ", firstObservationTimestamp=" + firstObservationTimestamp
+                + ", firstObservationTime=" + firstObservationTime
                 + ", lastObservationTimestamp=" + lastObservationTimestamp
+                + ", lastObservationTime=" + lastObservationTime
                 + ", sessionId=" + sessionId
                 + ", streamId=" + streamId
                 + ", channel=" + channel
