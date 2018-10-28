@@ -127,12 +127,29 @@ var app = new Vue({
       Http.send();
     },
 
+    getErrorRecords() {
+      const URL = '/api/v1/cnc/errorRecords/';
+      var self = this;
+      var data = self.$data.errorRecords.data;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL + self.$data.selectedDriver.name);
+      Http.onreadystatechange = function() {
+        data.length = 0;
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          resp.forEach(e => { data.push(e); });
+        }
+      };
+      Http.send();
+    },
+
     doPoll(idx) {
       var self = this;
       const pollFunctions = [
         this.getSystemCounters,
         this.getStreams,
         this.getLossRecords,
+        this.getErrorRecords,
       ];
 
       self.layoutPollIntervalIds.forEach(function(id) {
@@ -179,6 +196,8 @@ var app = new Vue({
       { icon: 'track_changes', text: 'System counters' },
       { icon: 'import_export', text: 'Streams' },
       { icon: 'data_usage',    text: 'Loss records' },
+      { icon: 'error_outline', text: 'Error records' },
+
     ],
 
     layoutVisible:         [true],
@@ -209,32 +228,42 @@ var app = new Vue({
 
     counters: {
       headers: [
-        { text: 'Id',      value: 'id',      align: 'right', sortable: true, width: 5 },
-        { text: 'Name',    value: 'name',    align: 'left',  sortable: true  },
-        { text: 'Value',   value: 'value',   align: 'right', sortable: false },
+        { text: 'Id',      value: 'id',      align: 'left', sortable: true, width: 5 },
+        { text: 'Name',    value: 'name',    align: 'left', sortable: true  },
+        { text: 'Value',   value: 'value',   align: 'left', sortable: false },
       ],
       data: []
     },
 
     streams: {
       headers: [
-        { text: 'Session', value: 'id',       align: 'right', sortable: true, width: 5 },
-        { text: 'Channel', value: 'channel',  align: 'left',  sortable: true },
-        { text: 'Stream',  value: 'stream',   align: 'right', sortable: true },
+        { text: 'Session', value: 'id',       align: 'left', sortable: true, width: 5 },
+        { text: 'Channel', value: 'channel',  align: 'left', sortable: true },
+        { text: 'Stream',  value: 'stream',   align: 'left', sortable: true },
       ],
       data: []
     },
 
     lossRecords: {
       headers: [
-        { text: 'Session',           value: 'session', align: 'right', sortable: true },
+        { text: 'Session',           value: 'session', align: 'left',  sortable: true },
         { text: 'Channel',           value: 'channel', align: 'left',  sortable: true },
-        { text: 'Stream',            value: 'stream',  align: 'right', sortable: true },
-        { text: 'Observation count', value: 'count',   align: 'right', sortable: true },
-        { text: 'Total bytes lost',  value: 'total',   align: 'right', sortable: true },
+        { text: 'Stream',            value: 'stream',  align: 'left',  sortable: true },
+        { text: 'Observation count', value: 'count',   align: 'left',  sortable: true },
+        { text: 'Source',            value: 'source',  align: 'left',  sortable: true },
+        { text: 'Total bytes lost',  value: 'total',   align: 'left',  sortable: true },
         { text: 'First observation', value: 'first',   align: 'left',  sortable: true },
         { text: 'Last observation',  value: 'last',    align: 'left',  sortable: true },
-        { text: 'Source',            value: 'source',  align: 'left',  sortable: true },
+      ],
+      data: []
+    },
+
+    errorRecords: {
+      headers: [
+        { text: 'Encoded exception', value: 'except',  align: 'left',  sortable: true },
+        { text: 'First observation', value: 'first',   align: 'left',  sortable: true },
+        { text: 'Last observation',  value: 'last',    align: 'left',  sortable: true },
+        { text: 'Observation count', value: 'count',   align: 'left',  sortable: true },
       ],
       data: []
     },
