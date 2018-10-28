@@ -1,10 +1,11 @@
 package io.aeron.monitor.model;
 
-import static io.aeron.monitor.model.Util.DATE_FORMAT; 
+import static io.aeron.monitor.model.Util.DATE_FORMAT;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 @ApiModel(description = "Error record")
@@ -16,8 +17,14 @@ public class ErrorRecord {
     @ApiModelProperty("First observation timestamp")
     private final long firstObservationTimestamp;
 
+    @ApiModelProperty("First observation time")
+    private final String firstObservationTime;
+
     @ApiModelProperty("Last observation timestamp")
     private final long lastObservationTimestamp;
+
+    @ApiModelProperty("Last observation time")
+    private final String lastObservationTime;
 
     @ApiModelProperty("Encoded exception")
     private final String encodedException;
@@ -39,6 +46,10 @@ public class ErrorRecord {
         this.firstObservationTimestamp = firstObservationTimestamp;
         this.lastObservationTimestamp = lastObservationTimestamp;
         this.encodedException = encodedException;
+
+        final DateFormat df = DATE_FORMAT.get();
+        firstObservationTime = df.format(new Date(firstObservationTimestamp));
+        lastObservationTime = df.format(new Date(lastObservationTimestamp));
     }
 
     public long getObservationCount() {
@@ -50,7 +61,7 @@ public class ErrorRecord {
     }
 
     public String getFirstObservationTime() {
-        return DATE_FORMAT.get().format(new Date(firstObservationTimestamp));
+        return firstObservationTime;
     }
 
     public long getLastObservationTimestamp() {
@@ -58,7 +69,7 @@ public class ErrorRecord {
     }
 
     public String getLastObservationTime() {
-        return DATE_FORMAT.get().format(new Date(lastObservationTimestamp));
+        return lastObservationTime;
     }
 
     public String getEncodedException() {
@@ -70,7 +81,9 @@ public class ErrorRecord {
         return "ErrorRecord ["
                 + "observationCount=" + observationCount
                 + ", firstObservationTimestamp=" + firstObservationTimestamp
+                + ", firstObservationTime=" + firstObservationTime
                 + ", lastObservationTimestamp=" + lastObservationTimestamp
+                + ", lastObservationTime=" + lastObservationTime
                 + ", encodedException=" + encodedException
                 + "]";
     }

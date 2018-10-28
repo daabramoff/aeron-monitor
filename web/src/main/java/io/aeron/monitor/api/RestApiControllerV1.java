@@ -6,6 +6,7 @@ import io.aeron.monitor.DriverAccessSupport;
 import io.aeron.monitor.model.ErrorRecord;
 import io.aeron.monitor.model.LossRecord;
 import io.aeron.monitor.model.Stream;
+import io.aeron.monitor.model.SysInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,6 +44,12 @@ public class RestApiControllerV1 {
     @Autowired
     @Qualifier(Const.BEAN_NAME_DRIVERS)
     private Map<String, DriverAccess> drivers;
+
+    @RequestMapping(method = RequestMethod.GET, value = "sysInfo")
+    @ApiOperation("Returns system information")
+    public SysInfo getSysInfo() {
+        return new SysInfo();
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "drivers")
     @ApiOperation("Returns counters related to the Media Driver entirely")
