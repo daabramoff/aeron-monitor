@@ -37,4 +37,14 @@ public class TestPlugin implements Plugin {
     public void shutdown() {
         shutdown = true;
     }
+
+    @Override
+    public String getName() {
+        return this.getClass().getName();
+    }
+
+    @Override
+    public String getVersion() {
+        return this.getClass().getName();
+    }
 }
