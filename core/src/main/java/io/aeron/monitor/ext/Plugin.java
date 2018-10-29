@@ -24,4 +24,14 @@ public interface Plugin extends Runnable {
      * Method called ones before the application thread pool is stopped.
      */
     void shutdown();
+
+    /**
+     * Name of the plug-in to be shown in the UI
+     */
+    String getName();
+
+    /**
+     * Version of the plug-in to be shown in the UI
+     */
+    String getVersion();
 }
