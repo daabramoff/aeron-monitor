@@ -47,12 +47,32 @@
           <v-flex xs6>
             <v-data-table
               hide-actions
-              hide-headers
+              :headers="sysInfo.headers"
               :items="sysInfo.data"
               class="elevation-6">
               <template slot="items" slot-scope="props">
                 <td class="text-xs-left">{{ props.item.label}}</td>
                 <td class="text-xs-left">{{ props.item.value}}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs6></v-flex>
+        </v-layout>
+
+        <!--  Plugins -->
+        <v-layout row wrap v-show="layoutVisible[0] && plugins.data.length">
+          <v-flex xs12>
+            <v-subheader>Plugins</v-subheader>
+          </v-flex>
+          <v-flex xs6>
+            <v-data-table
+              hide-actions
+              :headers="plugins.headers"
+              :items="plugins.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.name}}</td>
+                <td class="text-xs-left">{{ props.item.version}}</td>
               </template>
             </v-data-table>
           </v-flex>
@@ -86,7 +106,6 @@
           </v-flex>
           <v-flex xs6>
             <v-data-table
-              hide-actions
               :headers="streams.headers"
               :items="streams.data"
               class="elevation-6">
@@ -107,7 +126,6 @@
           </v-flex>
           <v-flex xs8>
             <v-data-table
-              hide-actions
               :headers="lossRecords.headers"
               :items="lossRecords.data"
               class="elevation-6">
@@ -133,7 +151,6 @@
           </v-flex>
           <v-flex xs8>
             <v-data-table
-              hide-actions
               :headers="errorRecords.headers"
               :items="errorRecords.data"
               class="elevation-6">

@@ -73,6 +73,21 @@ var app = new Vue({
       Http.send();
     },
 
+    getPlugins() {
+      const URL = '/api/v1/plugins';
+      var self = this;
+      var data = self.$data.plugins.data;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL);
+      Http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          resp.forEach(e => { data.push(e); });
+        }
+      };
+      Http.send();
+    },
+
     getSystemCounters() {
       const URL = '/api/v1/cnc/systemCounters/';
       var self = this;
@@ -196,6 +211,7 @@ var app = new Vue({
 
   created: function () {
     this.getSysInfo();
+    this.getPlugins();
     this.getDrivers();
   },
 
@@ -291,8 +307,8 @@ var app = new Vue({
 
     sysInfo: {
       headers: [
-        { text: 'Label', value: 'key',    align: 'left',  sortable: false },
-        { text: 'Value', value: 'value',  align: 'left',  sortable: false },
+        { text: 'Property', value: 'prop',  align: 'left',  sortable: false },
+        { text: 'Value',    value: 'value', align: 'left',  sortable: false },
       ],
       data: [
         { label: 'Host name',       key: 'hostName'     },
@@ -302,6 +318,14 @@ var app = new Vue({
         { label: 'JVM vendor',      key: 'jvmVendor'    },
         { label: 'JVM start time',  key: 'jvmStartTime' },
       ]
+    },
+
+    plugins: {
+      headers: [
+        { text: 'Name',    value: 'name',  align: 'left',  sortable: true  },
+        { text: 'Version', value: 'value', align: 'left',  sortable: false },
+      ],
+      data: []
     },
   },
 })
