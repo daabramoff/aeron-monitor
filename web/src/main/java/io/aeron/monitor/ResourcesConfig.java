@@ -34,7 +34,7 @@ public class ResourcesConfig {
      * @return {@link Map} where key is the driver's name and value is the driver's
      *         accessor
      */
-    @Bean("aeronDrivers")
+    @Bean(Const.BEAN_NAME_DRIVERS)
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Map<String, DriverAccess> getDrivers() {
         final String list = !driverList.trim().isEmpty() ? driverList : DEFAULT_DRIVER_LIST;

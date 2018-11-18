@@ -3,6 +3,7 @@ package io.aeron.monitor.api;
 import io.aeron.monitor.Const;
 import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.DriverAccessSupport;
+import io.aeron.monitor.ext.Plugin;
 import io.aeron.monitor.model.ErrorRecord;
 import io.aeron.monitor.model.LossRecord;
 import io.aeron.monitor.model.Stream;
@@ -45,12 +46,42 @@ public class RestApiControllerV1 {
     @Qualifier(Const.BEAN_NAME_DRIVERS)
     private Map<String, DriverAccess> drivers;
 
+    @Autowired
+    @Qualifier(Const.BEAN_NAME_PLUGINS)
+    private List<Plugin> plugins;
+
+    /**
+     * Returns system information.
+     * 
+     * @return system information
+     */
     @RequestMapping(method = RequestMethod.GET, value = "sysInfo")
     @ApiOperation("Returns system information")
     public SysInfo getSysInfo() {
         return new SysInfo();
     }
 
+    /**
+     * Returns plug-in list.
+     * 
+     * @return the list of the plug-ins loaded at startup
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "plugins")
+    @ApiOperation("Returns plugin list")
+    public ResponseEntity<List<Plugin>> getPlugins() {
+        System.out.println(plugins);
+        if (!plugins.isEmpty()) {
+            return new ResponseEntity<>(plugins, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Returns driver list.
+     * 
+     * @return the list of the drivers
+     */
     @RequestMapping(method = RequestMethod.GET, value = "drivers")
     @ApiOperation("Returns counters related to the Media Driver entirely")
     public Set<String> getDrivers() {
