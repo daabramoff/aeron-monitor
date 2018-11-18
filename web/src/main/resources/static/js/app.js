@@ -42,20 +42,6 @@ var app = new Vue({
       }.bind(self), 5000);
     },
 
-    getSysInfo() {
-      const URL = '/api/v1/sysInfo';
-      var self = this;
-      const Http = new XMLHttpRequest();
-      Http.open('GET', URL);
-      Http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          const resp = JSON.parse(Http.responseText);
-          self.$data.sysInfo.data.forEach(e => { e.value = resp[e.key]; });
-        }
-      };
-      Http.send();
-    },
-
     getDrivers() {
       const URL = '/api/v1/drivers';
       var self = this;
@@ -67,6 +53,21 @@ var app = new Vue({
           self.$data.drivers = resp.slice();
           self.$data.selectedDriver.name = self.$data.drivers[0];
           self.doPoll(0);
+        }
+      };
+      Http.send();
+    },
+
+    getSysInfo() {
+      const URL = '/api/v1/sysInfo';
+      var self = this;
+      const Http = new XMLHttpRequest();
+      Http.open('GET', URL);
+      Http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          const resp = JSON.parse(Http.responseText);
+          self.$data.sysInfo.data.forEach(e => { e.value = resp[e.key]; });
+          app.$forceUpdate();
         }
       };
       Http.send();
@@ -160,6 +161,8 @@ var app = new Vue({
     doPoll(idx) {
       var self = this;
       const pollFunctions = [
+        null,
+        null,
         this.getSystemCounters,
         this.getStreams,
         this.getLossRecords,
@@ -173,10 +176,12 @@ var app = new Vue({
       const t = self.$data.view.autoUpdateTimeout;
       if (t) {
         const f =  pollFunctions[idx];
-        f();
-        self.layoutPollIntervalIds[idx] = setInterval(function() {
+        if (f) {
           f();
-        }.bind(this), 1000 * t);
+          self.layoutPollIntervalIds[idx] = setInterval(function() {
+            f();
+          }.bind(this), 1000 * t);
+        }
       }
     },
 
@@ -208,12 +213,12 @@ var app = new Vue({
     drawer: null,
 
     drawerItems: [
+      { icon: 'info',          text: 'System' },
+      { divider: true },
       { icon: 'track_changes', text: 'Counters' },
       { icon: 'import_export', text: 'Streams' },
       { icon: 'data_usage',    text: 'Loss records' },
       { icon: 'error_outline', text: 'Error records' },
-      { divider: true },
-      { icon: 'info',          text: 'System' },
     ],
 
     layoutVisible:         [true],
