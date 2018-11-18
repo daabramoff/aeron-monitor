@@ -1,6 +1,8 @@
 package io.aeron.monitor.ext;
 
 import io.aeron.monitor.DriverAccess;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;
 
@@ -9,6 +11,7 @@ import java.util.Map;
  *
  * Plug-in is an optional task running in a separate thread within a thread pool,
  */
+@ApiModel(description = "Plugin")
 public interface Plugin extends Runnable {
 
     /**
@@ -26,12 +29,14 @@ public interface Plugin extends Runnable {
     void shutdown();
 
     /**
-     * Name of the plug-in to be shown in the UI
+     * Name of the plug-in to be shown in the UI.
      */
+    @ApiModelProperty("Plugin name")
     String getName();
 
     /**
-     * Version of the plug-in to be shown in the UI
+     * Version of the plug-in to be shown in the UI.
      */
+    @ApiModelProperty("Plugin version")
     String getVersion();
 }
