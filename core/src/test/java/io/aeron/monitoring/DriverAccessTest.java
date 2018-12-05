@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.MediaDriver.Context;
+import io.aeron.monitor.DriverAccess;
 
 @Disabled("Time consuming")
 class DriverAccessTest {

@@ -1,4 +1,4 @@
-package io.aeron.monitoring;
+package io.aeron.monitor;
 
 public class DriverDefinition {
 

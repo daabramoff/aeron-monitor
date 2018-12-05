@@ -1,8 +1,8 @@
 package io.aeron.monitor;
 
 import io.aeron.CommonContext;
+import io.aeron.monitor.DriverAccess;
 import io.aeron.monitor.util.ConfigUtil;
-import io.aeron.monitoring.DriverAccess;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +28,13 @@ public class ResourcesConfig {
     @Value("${aeron.drivers}")
     private String driverList;
 
-    @Bean("aeronDrivers")
+    /**
+     * Provides the singleton which accesses the observed drivers.
+     *
+     * @return {@link Map} where key is the driver's name and value is the driver's
+     *         accessor
+     */
+    @Bean(Const.BEAN_NAME_DRIVERS)
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Map<String, DriverAccess> getDrivers() {
         final String list = !driverList.trim().isEmpty() ? driverList : DEFAULT_DRIVER_LIST;

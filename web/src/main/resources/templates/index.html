@@ -11,7 +11,14 @@
 <body>
 <div id="app">
   <v-app id="aeron-monitor">
-    <v-navigation-drawer stateless fixed clipped class="grey lighten-4" app v-model="drawer" width="220">
+
+    <v-toolbar color="primary" app clipped-left v-bind:height="48">
+      <v-toolbar-side-icon @click.native="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title class="white--text title">[[${toolbar_title}]]</v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
+
+    <v-navigation-drawer fixed clipped class="grey lighten-4" app v-model="drawer" width="220">
       <v-list dense class="grey lighten-4">
         <template v-for="(item, i) in drawerItems">
           <v-divider dark v-if="item.divider" class="my-3" :key="i"></v-divider>
@@ -29,32 +36,135 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar color="primary" app absolute clipped-left v-bind:height="48">
-      <v-toolbar-side-icon @click.native="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title class="white--text title">[[${toolbar_title}]]</v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-toolbar>
-
     <v-content>
-      <v-container grid-list-md >
-        <v-layout row wrap>
+      <v-container grid-list-md>
+
+        <!--  System information -->
+        <v-layout row wrap v-show="layoutVisible[0]">
           <v-flex xs12>
-            <v-subheader>System counters</v-subheader>
+            <v-subheader>System information</v-subheader>
           </v-flex>
           <v-flex xs6>
-            <v-data-table 
-              :headers="counters.headers" 
-              :items="counters.data"
-		      class="elevation-1">
-		      <template slot="items" slot-scope="props">
-			    <td class="text-xs-right">{{ props.item.id }}</td>
-			    <td class="text-xs-left">{{ props.item.name }}</td>
-			    <td class="text-xs-right">{{ props.item.value }}</td>
-		      </template>
+            <v-data-table
+              hide-actions
+              :headers="sysInfo.headers"
+              :items="sysInfo.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.label}}</td>
+                <td class="text-xs-left">{{ props.item.value}}</td>
+              </template>
             </v-data-table>
           </v-flex>
           <v-flex xs6></v-flex>
         </v-layout>
+
+        <!--  Plugins -->
+        <v-layout row wrap v-show="layoutVisible[0] && plugins.data.length">
+          <v-flex xs12>
+            <v-subheader>Plugins</v-subheader>
+          </v-flex>
+          <v-flex xs6>
+            <v-data-table
+              hide-actions
+              :headers="plugins.headers"
+              :items="plugins.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.name}}</td>
+                <td class="text-xs-left">{{ props.item.version}}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs6></v-flex>
+        </v-layout>
+
+        <!--  System counters -->
+        <v-layout row wrap v-show="layoutVisible[2]">
+          <v-flex xs12>
+            <v-subheader>System counters</v-subheader>
+          </v-flex>
+          <v-flex xs6>
+            <v-data-table
+              :headers="counters.headers"
+              :items="counters.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-right">{{ props.item.id }}</td>
+                <td class="text-xs-left">{{ props.item.name }}</td>
+                <td class="text-xs-right">{{ props.item.value }}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs6></v-flex>
+        </v-layout>
+
+        <!--  Streams -->
+        <v-layout row wrap v-show="layoutVisible[3]">
+          <v-flex xs12>
+            <v-subheader>Streams</v-subheader>
+          </v-flex>
+          <v-flex xs6>
+            <v-data-table
+              :headers="streams.headers"
+              :items="streams.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-right">{{ props.item.sessionId }}</td>
+                <td class="text-xs-left">{{ props.item.channel }}</td>
+                <td class="text-xs-right">{{ props.item.streamId }}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs6></v-flex>
+        </v-layout>
+
+        <!--  Loss records -->
+        <v-layout row wrap v-show="layoutVisible[4]">
+          <v-flex xs12>
+            <v-subheader>Loss records</v-subheader>
+          </v-flex>
+          <v-flex xs8>
+            <v-data-table
+              :headers="lossRecords.headers"
+              :items="lossRecords.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-right">{{ props.item.sessionId }}</td>
+                <td class="text-xs-left">{{ props.item.channel }}</td>
+                <td class="text-xs-right">{{ props.item.streamId }}</td>
+                <td class="text-xs-right">{{ props.item.observationCount }}</td>
+                <td class="text-xs-left">{{ props.item.source}}</td>
+                <td class="text-xs-right">{{ props.item.totalBytesLost }}</td>
+                <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+                <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs4></v-flex>
+        </v-layout>
+
+        <!--  Error records -->
+        <v-layout row wrap v-show="layoutVisible[5]">
+          <v-flex xs12>
+            <v-subheader>Loss records</v-subheader>
+          </v-flex>
+          <v-flex xs8>
+            <v-data-table
+              :headers="errorRecords.headers"
+              :items="errorRecords.data"
+              class="elevation-6">
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.encodedException}}</td>
+                <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+                <td class="text-xs-left">{{ props.item.firstObservationTime }}</td>
+                <td class="text-xs-right">{{ props.item.observationCount }}</td>
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex xs4></v-flex>
+        </v-layout>
+
       </v-container>
     </v-content>
 
@@ -62,36 +172,35 @@
       <v-tooltip right :style="{width: '80px'}">
         <v-select
           slot="activator"
-          :items="counters.autoUpdateList"
-          v-model.number="counters.autoUpdateTimeout"
-		  class="grey--text caption">
+          :items="view.autoUpdateList"
+          v-model.number="view.autoUpdateTimeout"
+          class="grey--text caption">
         </v-select>
         <span>Refresh period, sec.</span>
       </v-tooltip>
-
       <v-spacer></v-spacer>
+
       <v-tooltip left :style="{width: '140px'}">
         <v-select
           slot="activator"
           :items="drivers"
           v-model.number="selectedDriver.name"
-		  class="grey--text caption">
+          class="grey--text caption">
         </v-select>
         <span>Driver</span>
       </v-tooltip>
-      <v-chip label outline v-bind:style="{ color: connectionState.color }">
+      <v-chip label outline v-bind:style="connectionState.style">
         {{ connectionState.label }}
       </v-chip>
-      
       <v-spacer></v-spacer>
+
       <div class="grey--text caption">v[[${app_version}]]</div>
     </v-footer>
   </v-app>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.js"></script>
 <script src="/js/app.js"></script>
-
 </body>
 </html>

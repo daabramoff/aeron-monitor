@@ -1,10 +1,10 @@
-package io.aeron.monitoring.model;
+package io.aeron.monitor.model;
 
 import io.aeron.driver.status.SystemCounterDescriptor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "System counter infoumation")
+@ApiModel(description = "System counter")
 public class Counter {
 
     @ApiModelProperty("Counter ID")
@@ -19,6 +19,14 @@ public class Counter {
     @ApiModelProperty("Counter value")
     private final long value;
 
+    /**
+     * Constructs new instance.
+     * 
+     * @param typeId     type of the counter
+     * @param descriptor descriptor of the counter
+     * @param label      the counter label
+     * @param value      the counter value
+     */
     public Counter(
             final int typeId,
             final SystemCounterDescriptor descriptor,

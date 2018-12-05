@@ -6,9 +6,9 @@ allprojects {
 subprojects {
     buildscript {
         ext {
-            aeronVersion = '1.11.2'
-            junitVersion = '5.3.1'
-            checkstyleVersion = '8.12'
+            aeronVersion = "1.11.2"
+            junitVersion = "5.3.1"
+            checkstyleVersion = "8.12"
         }
 
         repositories {
@@ -20,12 +20,12 @@ subprojects {
         }
     }
 
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'checkstyle'
-    apply plugin: 'pmd'
-    apply plugin: 'maven-publish'
+    apply plugin: "java"
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: "checkstyle"
+    apply plugin: "pmd"
+    apply plugin: "maven-publish"
     
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -35,15 +35,22 @@ subprojects {
     }
 
     dependencies {
-        checkstyle "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
+        checkstyle("com.puppycrawl.tools:checkstyle:$checkstyleVersion")
+        
+        testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+
+        testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     }
 
     checkstyle {
         toolVersion = "$checkstyleVersion"
         sourceSets = [sourceSets.main]
-        configFile = rootProject.file('config/checkstyle/checkstyle.xml');
+        configFile = rootProject.file("config/checkstyle/checkstyle.xml");
         showViolations = true
-        ignoreFailures = true
+        ignoreFailures = false 
     }
 
     checkstyleTest {
@@ -67,4 +74,4 @@ subprojects {
     }
 }
 
-defaultTasks 'clean', 'build'
+defaultTasks "clean", "build"

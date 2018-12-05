@@ -2,8 +2,8 @@ package io.aeron.monitor.ext.plugins;
 
 import java.util.Map;
 
-import io.aeron.monitoring.DriverAccess;
-import io.aeron.monitoring.ext.Plugin;
+import io.aeron.monitor.DriverAccess;
+import io.aeron.monitor.ext.Plugin;
 
 public class TestPlugin implements Plugin {
 
@@ -36,5 +36,15 @@ public class TestPlugin implements Plugin {
     @Override
     public void shutdown() {
         shutdown = true;
+    }
+
+    @Override
+    public String getName() {
+        return this.getClass().getName();
+    }
+
+    @Override
+    public String getVersion() {
+        return this.getClass().getName();
     }
 }

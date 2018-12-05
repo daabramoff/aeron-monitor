@@ -1,8 +1,8 @@
 package io.aeron.monitor.ext;
 
 import io.aeron.monitor.Const;
-import io.aeron.monitoring.DriverAccess;
-import io.aeron.monitoring.ext.Plugin;
+import io.aeron.monitor.DriverAccess;
+import io.aeron.monitor.ext.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
  * Loads {@link Plugin}s on the application startup.
- * 
+ *
  * <p>Uses {@link ServiceLoader} to find plug-ins in the application classpath
  */
 @Component
@@ -43,6 +46,8 @@ public class PluginLoader {
 
     private final List<Plugin> plugins = new ArrayList<>();
 
+    @Bean(Const.BEAN_NAME_PLUGINS)
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public List<Plugin> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
@@ -59,7 +64,7 @@ public class PluginLoader {
                 p.init(args, drivers);
                 plugins.add(p);
                 taskExecutor.execute(p);
-                LOG.info("Loaded: {}", p);
+                LOG.info("Loaded plugin: {} v{}", p.getName(), p.getVersion());
             } catch (final Exception ex) {
                 LOG.warn("Pligin initialization error: {}", ex.getMessage());
             }

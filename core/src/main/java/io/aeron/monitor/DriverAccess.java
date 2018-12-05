@@ -1,18 +1,22 @@
-package io.aeron.monitoring;
+package io.aeron.monitor;
 
 import static io.aeron.CncFileDescriptor.cncVersionOffset;
 
 import io.aeron.Aeron;
 import io.aeron.CncFileDescriptor;
 import io.aeron.CommonContext;
+import io.aeron.driver.reports.LossReportUtil;
 
 import java.io.File;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.agrona.DirectBuffer;
 import org.agrona.IoUtil;
+import org.agrona.concurrent.AtomicBuffer;
+import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.status.CountersReader;
 
@@ -27,6 +31,8 @@ public class DriverAccess {
     private DirectBuffer cncMetaData;
     private ManyToOneRingBuffer toDriver;
     private CountersReader countersReader;
+    private AtomicBuffer lossReportBuffer;
+    private AtomicBuffer errorLogBuffer;
 
     private boolean connected;
 
@@ -42,15 +48,21 @@ public class DriverAccess {
     public String getName() {
         return name;
     }
-    
+
     public String getDir() {
         return dir;
     }
-    
+
     public boolean isConnected() {
         return connected;
     }
 
+    /**
+     * Checks if the driver is active.
+     *
+     * @return <code>true</code> if the driver is active otherwise
+     *         <code>false</code>
+     */
     public boolean isActive() {
         final Consumer<String> logger = s -> {
         };
@@ -81,38 +93,66 @@ public class DriverAccess {
         return connected ? toDriver.consumerHeartbeatTime() : 0L;
     }
 
-    public CountersReader getCountersReader() {
-        return connected ? countersReader : null;
+    public Optional<CountersReader> getCountersReader() {
+        return connected ? Optional.of(countersReader) : Optional.empty();
     }
 
+    public Optional<AtomicBuffer> getLossReportBuffer() {
+        return connected ? Optional.of(lossReportBuffer) : Optional.empty();
+    }
+
+    public Optional<AtomicBuffer> getErrorLogBuffer() {
+        return connected ? Optional.of(errorLogBuffer) : Optional.empty();
+    }
+
+    /**
+     * Connects to the driver.
+     */
     public synchronized void connect() {
-        if (!connected) {
-            try {
-                final File cncFile = new File(dir, CncFileDescriptor.CNC_FILE);
+        if (connected) {
+            return;
+        }
 
-                cncByteBuffer = IoUtil.mapExistingFile(cncFile, "cnc");
-                cncMetaData = CncFileDescriptor.createMetaDataBuffer(cncByteBuffer);
+        try {
+            final File cncFile = new File(dir, CncFileDescriptor.CNC_FILE);
+            final File lossReportFile = LossReportUtil.file(dir);
 
-                toDriver = new ManyToOneRingBuffer(
-                        CncFileDescriptor.createToDriverBuffer(cncByteBuffer, cncMetaData));
+            cncByteBuffer = IoUtil.mapExistingFile(cncFile, "cnc");
+            cncMetaData = CncFileDescriptor.createMetaDataBuffer(cncByteBuffer);
 
-                countersReader = new CountersReader(
-                        CncFileDescriptor.createCountersMetaDataBuffer(cncByteBuffer, cncMetaData),
-                        CncFileDescriptor.createCountersValuesBuffer(cncByteBuffer, cncMetaData),
-                        StandardCharsets.US_ASCII);
+            toDriver = new ManyToOneRingBuffer(
+                    CncFileDescriptor.createToDriverBuffer(cncByteBuffer, cncMetaData));
 
-                connected = true;
-            } catch (final Exception ex) {
-                if (errorHandler != null) {
-                    errorHandler.accept(ex);
-                }
+            countersReader = new CountersReader(
+                    CncFileDescriptor.createCountersMetaDataBuffer(cncByteBuffer, cncMetaData),
+                    CncFileDescriptor.createCountersValuesBuffer(cncByteBuffer, cncMetaData),
+                    StandardCharsets.US_ASCII);
+
+            lossReportBuffer = new UnsafeBuffer(
+                    IoUtil.mapExistingFile(lossReportFile, "Loss Report"));
+
+            errorLogBuffer = CncFileDescriptor.createErrorLogBuffer(cncByteBuffer, cncMetaData);
+
+            connected = true;
+        } catch (final Exception ex) {
+            if (errorHandler != null) {
+                errorHandler.accept(ex);
             }
         }
     }
-    
+
     public synchronized void reconnect() {
         connected = false;
         connect();
+    }
+
+    /**
+     * Reconnects to the driver if it is inactive.
+     */
+    public void reconnectIfInactive() {
+        if (!isActive()) {
+            reconnect();
+        }
     }
 
     @Override
